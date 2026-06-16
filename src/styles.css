@@ -1,1 +1,109 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased min-h-screen;
+  }
+}
+
+@layer utilities {
+  /* ── Layout ── */
+  .sidebar {
+    @apply fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-30
+           flex flex-col transition-all duration-300 ease-in-out overflow-hidden shadow-lg;
+  }
+  .sidebar-open  { width: 240px; }
+  .sidebar-closed { width: 64px; }
+
+  .main-open   { margin-left: 240px; }
+  .main-closed { margin-left: 64px; }
+
+  /* ── Cards ── */
+  .card {
+    @apply bg-white border border-slate-200 rounded-2xl shadow-sm;
+  }
+  .card-stat {
+    @apply bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex items-center gap-4;
+  }
+
+  /* ── Inputs ── */
+  .input-field {
+    @apply w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-4 py-2.5 text-sm
+           placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent
+           transition duration-200;
+  }
+  .input-error {
+    @apply border-red-400 focus:ring-red-400 bg-red-50;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold
+           py-2.5 px-5 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+           flex items-center justify-center gap-2 shadow-sm;
+  }
+  .btn-secondary {
+    @apply bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold
+           py-2.5 px-5 rounded-lg transition duration-200 flex items-center justify-center gap-2;
+  }
+  .btn-emerald {
+    @apply bg-emerald-600 hover:bg-emerald-500 text-white font-semibold
+           py-2.5 px-5 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+           flex items-center justify-center gap-2 shadow-sm;
+  }
+  .btn-danger {
+    @apply bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-4 py-2 rounded-lg
+           transition duration-200 flex items-center gap-2 border border-red-200;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-indigo { @apply bg-indigo-50 text-indigo-700 border border-indigo-200; }
+  .badge-purple { @apply bg-purple-50 text-purple-700 border border-purple-200; }
+  .badge-emerald { @apply bg-emerald-50 text-emerald-700 border border-emerald-200; }
+  .badge-red     { @apply bg-red-50 text-red-700 border border-red-200; }
+  .badge-slate   { @apply bg-slate-100 text-slate-600 border border-slate-200; }
+
+  /* ── Sidebar nav item ── */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+           text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-150 cursor-pointer
+           whitespace-nowrap overflow-hidden;
+  }
+  .nav-item-active {
+    @apply bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-700;
+  }
+  .nav-icon {
+    @apply w-5 h-5 shrink-0;
+  }
+
+  /* ── Section heading ── */
+  .section-title {
+    @apply text-base font-semibold text-slate-800 flex items-center gap-2;
+  }
+  .section-label {
+    @apply text-xs font-medium text-slate-400 uppercase tracking-wider;
+  }
+
+  /* ── Table ── */
+  .tbl-head {
+    @apply text-left py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider;
+  }
+  .tbl-cell {
+    @apply py-3 px-4 text-sm text-slate-700;
+  }
+
+  /* ── Animations ── */
+  .animate-fade-in {
+    animation: fadeIn 0.25s ease both;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,388 @@
+<div class="min-h-screen bg-slate-50 flex">
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="sidebar" [class]="sidebarOpen ? 'sidebar-open' : 'sidebar-closed'">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-3 px-4 py-4 border-b border-slate-100 min-h-[64px]">
+      <div class="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      </div>
+      @if (sidebarOpen) {
+      <div class="animate-fade-in overflow-hidden">
+        <p class="font-bold text-slate-900 text-sm leading-tight">Blockchain</p>
+        <p class="text-xs text-slate-400">Hashing System</p>
+      </div>
+      }
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 px-2 py-4 space-y-1 overflow-hidden">
+      @if (sidebarOpen) {
+      <p class="section-label px-3 mb-2">Navigation</p>
+      }
+      @for (item of visibleNav(); track item.id) {
+      <button (click)="navigate(item.id)" class="nav-item w-full" [class.nav-item-active]="activePage === item.id"
+        [title]="!sidebarOpen ? item.label : ''">
+
+        <!-- Icon -->
+        @switch (item.icon) {
+        @case ('chart') {
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        }
+        @case ('chain') {
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+        </svg>
+        }
+        @case ('bolt') {
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        }
+        @case ('shield') {
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        }
+        @case ('doc') {
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        }
+        @case ('users') {
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        }
+        @case ('user') {
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        }
+        }
+
+        @if (sidebarOpen) {
+        <span class="animate-fade-in">{{ item.label }}</span>
+        }
+      </button>
+      }
+    </nav>
+
+    <!-- User footer -->
+    @if (profile) {
+    <div class="border-t border-slate-100 px-3 py-3">
+      <div class="flex items-center gap-3 overflow-hidden">
+        @if (profile.profilePicUrl) {
+        <img [src]="profile.profilePicUrl" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />
+        } @else {
+        <div
+          class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+          {{ profile.username[0].toUpperCase() }}
+        </div>
+        }
+        @if (sidebarOpen) {
+        <div class="animate-fade-in overflow-hidden min-w-0">
+          <p class="text-sm font-medium text-slate-800 truncate">{{ profile.username }}</p>
+          <p class="text-xs text-slate-400 truncate">{{ profile.email }}</p>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       MAIN WRAPPER
+  ══════════════════════════════════════════ -->
+  <div class="flex-1 flex flex-col min-h-screen transition-all duration-300"
+    [class]="sidebarOpen ? 'main-open' : 'main-closed'">
+
+    <!-- ── Top Bar ── -->
+    <header
+      class="sticky top-0 z-20 bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-4">
+        <!-- Sidebar toggle -->
+        <button (click)="toggleSidebar()"
+          class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 transition text-slate-500">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-sm">
+          <span class="text-slate-400">Dashboard</span>
+          <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <span class="font-semibold text-slate-800">{{ pageTitles[activePage] }}</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Status indicator -->
+        <div
+          class="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+          System Online
+        </div>
+        <!-- Logout -->
+        <button (click)="logout()" class="btn-danger text-sm py-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1" />
+          </svg>
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Page Content ── -->
+    <main class="flex-1 px-6 py-8">
+
+      <!-- ════ OVERVIEW PAGE ════ -->
+      @if (activePage === 'overview') {
+      <div class="space-y-6 animate-fade-in">
+        <!-- Welcome banner -->
+        <div class="bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-2xl p-6 text-white">
+          <p class="text-xs font-medium opacity-75 uppercase tracking-wider mb-1">Welcome back</p>
+          <h1 class="text-2xl font-bold mb-1">{{ profile?.username ?? 'User' }} 👋</h1>
+          <p class="text-sm opacity-80">Monitor and interact with your blockchain system below.</p>
+        </div>
+
+        <!-- Quick action cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button (click)="navigate('chain')"
+            class="card p-5 text-left hover:shadow-md hover:border-indigo-200 transition group">
+            <div
+              class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center mb-3 group-hover:bg-indigo-100 transition">
+              <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+            </div>
+            <p class="font-semibold text-slate-800 text-sm">Chain Explorer</p>
+            <p class="text-xs text-slate-400 mt-0.5">Browse all blocks</p>
+          </button>
+
+          <button (click)="navigate('mine')"
+            class="card p-5 text-left hover:shadow-md hover:border-emerald-200 transition group">
+            <div
+              class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-3 group-hover:bg-emerald-100 transition">
+              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <p class="font-semibold text-slate-800 text-sm">Mine a Block</p>
+            <p class="text-xs text-slate-400 mt-0.5">Add new block to chain</p>
+          </button>
+
+          <button (click)="navigate('verify')"
+            class="card p-5 text-left hover:shadow-md hover:border-purple-200 transition group">
+            <div
+              class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center mb-3 group-hover:bg-purple-100 transition">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <p class="font-semibold text-slate-800 text-sm">Verify Chain</p>
+            <p class="text-xs text-slate-400 mt-0.5">Check chain integrity</p>
+          </button>
+
+          <button (click)="navigate('docs')"
+            class="card p-5 text-left hover:shadow-md hover:border-orange-200 transition group">
+            <div
+              class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center mb-3 group-hover:bg-orange-100 transition">
+              <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <p class="font-semibold text-slate-800 text-sm">Document Chain</p>
+            <p class="text-xs text-slate-400 mt-0.5">Hash & verify documents</p>
+          </button>
+
+          <button (click)="navigate('profile')"
+            class="card p-5 text-left hover:shadow-md hover:border-blue-200 transition group">
+            <div
+              class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-3 group-hover:bg-blue-100 transition">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <p class="font-semibold text-slate-800 text-sm">My Profile</p>
+            <p class="text-xs text-slate-400 mt-0.5">View your account</p>
+          </button>
+        </div>
+
+        <!-- Blockchain stats loaded inside blockchain component overview -->
+        <app-blockchain [page]="'overview'" />
+      </div>
+      }
+
+      <!-- ════ BLOCKCHAIN PAGES ════ -->
+      @if (activePage === 'chain' || activePage === 'mine' || activePage === 'verify' || activePage === 'docs') {
+      <div class="animate-fade-in">
+        <app-blockchain [page]="activePage" />
+      </div>
+      }
+
+      <!-- ════ USERS PAGE ════ -->
+      @if (activePage === 'users' && isAdmin()) {
+      <div class="animate-fade-in space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="section-title">
+            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            All Users
+          </h2>
+          @if (!usersLoading) {
+          <span class="badge badge-slate">{{ users.length }} total</span>
+          }
+        </div>
+
+        <div class="card overflow-hidden">
+          @if (usersLoading) {
+          <div class="flex items-center gap-3 text-slate-400 p-8 justify-center">
+            <app-spinner size="md" />
+            <span class="text-sm">Loading users...</span>
+          </div>
+          } @else if (users.length) {
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th class="tbl-head">ID</th>
+                  <th class="tbl-head">User</th>
+                  <th class="tbl-head">Email</th>
+                  <th class="tbl-head">Role</th>
+                  <th class="tbl-head">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                @for (u of users; track u.id) {
+                <tr class="hover:bg-slate-50 transition">
+                  <td class="tbl-cell text-slate-400">#{{ u.id }}</td>
+                  <td class="tbl-cell">
+                    <div class="flex items-center gap-2.5">
+                      <div
+                        class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-700">
+                        {{ u.username[0].toUpperCase() }}
+                      </div>
+                      <span class="font-medium text-slate-800">{{ u.username }}</span>
+                    </div>
+                  </td>
+                  <td class="tbl-cell text-slate-500">{{ u.email }}</td>
+                  <td class="tbl-cell">
+                    <span class="badge" [class]="u.role === 'ADMIN' ? 'badge-purple' : 'badge-indigo'">
+                      {{ u.role }}
+                    </span>
+                  </td>
+                  <td class="tbl-cell">
+                    <span class="badge" [class]="u.enabled ? 'badge-emerald' : 'badge-red'">
+                      <span class="w-1.5 h-1.5 rounded-full inline-block mr-1"
+                        [class]="u.enabled ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                      {{ u.enabled ? 'Active' : 'Disabled' }}
+                    </span>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          } @else {
+          <p class="text-slate-400 text-sm p-6">No users found.</p>
+          }
+        </div>
+      </div>
+      }
+
+      <!-- ════ PROFILE PAGE ════ -->
+      @if (activePage === 'profile') {
+      <div class="animate-fade-in space-y-4 max-w-2xl">
+        <h2 class="section-title">
+          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          My Profile
+        </h2>
+
+        @if (profileLoading) {
+        <div class="flex items-center gap-3 text-slate-400 card p-8 justify-center">
+          <app-spinner size="md" />
+          <span class="text-sm">Loading profile...</span>
+        </div>
+        } @else if (profile) {
+        <!-- Avatar + name hero -->
+        <div class="card p-6 flex items-center gap-5">
+          @if (profile.profilePicUrl) {
+          <img [src]="profile.profilePicUrl" alt="avatar" class="w-16 h-16 rounded-2xl object-cover shadow" />
+          } @else {
+          <div
+            class="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow">
+            {{ profile.username[0].toUpperCase() }}
+          </div>
+          }
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">{{ profile.username }}</h3>
+            <p class="text-sm text-slate-500">{{ profile.email }}</p>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="badge" [class]="profile.role === 'ADMIN' ? 'badge-purple' : 'badge-indigo'">
+                {{ profile.role }}
+              </span>
+              <span class="badge" [class]="profile.enabled ? 'badge-emerald' : 'badge-red'">
+                <span class="w-1.5 h-1.5 rounded-full inline-block mr-1"
+                  [class]="profile.enabled ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                {{ profile.enabled ? 'Active' : 'Disabled' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detail grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="card p-4">
+            <p class="section-label mb-1">Username</p>
+            <p class="font-medium text-slate-800">{{ profile.username }}</p>
+          </div>
+          <div class="card p-4">
+            <p class="section-label mb-1">Email</p>
+            <p class="font-medium text-slate-800">{{ profile.email }}</p>
+          </div>
+          <div class="card p-4">
+            <p class="section-label mb-1">Role</p>
+            <span class="badge" [class]="profile.role === 'ADMIN' ? 'badge-purple' : 'badge-indigo'">
+              {{ profile.role }}
+            </span>
+          </div>
+          <div class="card p-4">
+            <p class="section-label mb-1">Account Status</p>
+            <span class="badge" [class]="profile.enabled ? 'badge-emerald' : 'badge-red'">
+              {{ profile.enabled ? '● Active' : '● Disabled' }}
+            </span>
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+    </main>
+  </div>
+</div>

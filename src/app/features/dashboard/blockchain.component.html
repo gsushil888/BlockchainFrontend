@@ -1,0 +1,717 @@
+<!-- ════ OVERVIEW ════ -->
+@if (safePage === 'overview') {
+  @if (statsLoading) {
+    <div class="card p-8 flex items-center justify-center gap-3 text-slate-400">
+      <app-spinner size="md" /> <span class="text-sm">Loading blockchain stats...</span>
+    </div>
+  } @else if (stats) {
+    <div class="space-y-4">
+      <!-- Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card-stat">
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-slate-900">{{ stats.totalBlocks }}</p>
+            <p class="text-xs text-slate-400 mt-0.5">Total Blocks</p>
+          </div>
+        </div>
+
+        <div class="card-stat">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-slate-900">{{ stats.totalTransactions }}</p>
+            <p class="text-xs text-slate-400 mt-0.5">Transactions</p>
+          </div>
+        </div>
+
+        <div class="card-stat">
+          <div class="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-slate-900">{{ stats.difficulty }}</p>
+            <p class="text-xs text-slate-400 mt-0.5">Difficulty</p>
+          </div>
+        </div>
+
+        <div class="card-stat">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+               [class]="stats.isValid ? 'bg-emerald-50' : 'bg-red-50'">
+            @if (stats.isValid) {
+              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            } @else {
+              <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            }
+          </div>
+          <div>
+            <p class="text-sm font-bold" [class]="stats.isValid ? 'text-emerald-600' : 'text-red-500'">
+              {{ stats.isValid ? 'Valid' : 'Tampered' }}
+            </p>
+            <p class="text-xs text-slate-400 mt-0.5">Chain Status</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Latest hash + chain visual -->
+      <div class="card p-5 space-y-4">
+        <div>
+          <p class="section-label mb-1">Latest Block Hash</p>
+          <p class="font-mono text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 break-all">
+            {{ stats.lastBlockHash || '—' }}
+          </p>
+        </div>
+
+        <div>
+          <p class="section-label mb-3">Chain Visualisation</p>
+          <div class="flex items-center gap-2 overflow-x-auto pb-1">
+            @for (i of [].constructor(stats.totalBlocks > 8 ? 8 : stats.totalBlocks); track $index) {
+              <div class="flex items-center gap-2 shrink-0">
+                <div class="flex flex-col items-center justify-center w-14 h-14 rounded-xl border-2 text-center transition"
+                     [class]="$index === 0
+                       ? 'bg-yellow-50 border-yellow-300 text-yellow-700'
+                       : 'bg-indigo-50 border-indigo-200 text-indigo-700'">
+                  <span class="text-xs font-bold">#{{ $index }}</span>
+                  <div class="w-2 h-2 rounded-full mt-1" [class]="$index === 0 ? 'bg-yellow-400' : 'bg-emerald-400'"></div>
+                </div>
+                @if ($index < (stats.totalBlocks > 8 ? 7 : stats.totalBlocks - 1)) {
+                  <svg class="w-4 h-4 text-slate-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                }
+              </div>
+            }
+            @if (stats.totalBlocks > 8) {
+              <span class="text-slate-400 text-xs shrink-0 ml-1">+{{ stats.totalBlocks - 8 }} more</span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}
+
+<!-- ════ CHAIN EXPLORER ════ -->
+@if (safePage === 'chain') {
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="section-title">
+        <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+        </svg>
+        Chain Explorer
+      </h2>
+      @if (!chainLoading) {
+        <span class="badge badge-slate">{{ chain.length }} blocks</span>
+      }
+    </div>
+
+    @if (chainLoading) {
+      <div class="card p-8 flex items-center justify-center gap-3 text-slate-400">
+        <app-spinner size="md" /> <span class="text-sm">Loading chain...</span>
+      </div>
+    } @else if (chain.length) {
+      <div class="space-y-2">
+        @for (block of chain; track block.index) {
+          <div class="card overflow-hidden">
+            <!-- Block row -->
+            <button (click)="toggleBlock(block.index)"
+                    class="w-full px-5 py-4 flex items-center justify-between hover:bg-slate-50 transition">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center border-2 shrink-0 text-sm font-bold"
+                     [class]="block.index === 0
+                       ? 'bg-yellow-50 border-yellow-300 text-yellow-700'
+                       : 'bg-indigo-50 border-indigo-200 text-indigo-700'">
+                  #{{ block.index }}
+                </div>
+                <div class="text-left">
+                  <p class="font-semibold text-slate-800 text-sm">
+                    {{ block.index === 0 ? 'Genesis Block' : 'Block #' + block.index }}
+                  </p>
+                  <p class="text-xs text-slate-400 font-mono">{{ truncateHash(block.hash) }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="badge badge-slate hidden sm:inline-flex">{{ block.transactions.length }} txns</span>
+                <span class="text-xs text-slate-400 hidden md:block">{{ block.timestamp | date:'medium' }}</span>
+                <svg class="w-4 h-4 text-slate-400 transition-transform"
+                     [class.rotate-180]="expandedBlock === block.index"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </button>
+
+            <!-- Expanded block details -->
+            @if (expandedBlock === block.index) {
+              <div class="border-t border-slate-100 px-5 py-4 bg-slate-50 space-y-4 animate-fade-in">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div class="bg-white border border-slate-200 rounded-xl p-3">
+                    <p class="section-label mb-1.5">Hash</p>
+                    <p class="font-mono text-slate-700 break-all">{{ block.hash }}</p>
+                  </div>
+                  <div class="bg-white border border-slate-200 rounded-xl p-3">
+                    <p class="section-label mb-1.5">Previous Hash</p>
+                    <p class="font-mono text-slate-700 break-all">{{ block.previousHash }}</p>
+                  </div>
+                  <div class="bg-white border border-slate-200 rounded-xl p-3">
+                    <p class="section-label mb-1.5">Nonce</p>
+                    <p class="font-mono text-slate-800 font-semibold">{{ block.nonce }}</p>
+                  </div>
+                  <div class="bg-white border border-slate-200 rounded-xl p-3">
+                    <p class="section-label mb-1.5">Miner</p>
+                    <p class="font-mono text-slate-700">{{ block.miner || 'system' }}</p>
+                  </div>
+                  @if (block.data) {
+                    <div class="bg-white border border-slate-200 rounded-xl p-3 sm:col-span-2">
+                      <p class="section-label mb-1.5">Data</p>
+                      <p class="text-slate-700">{{ block.data }}</p>
+                    </div>
+                  }
+                </div>
+
+                @if (block.transactions.length) {
+                  <div>
+                    <p class="section-label mb-2">Transactions ({{ block.transactions.length }})</p>
+                    <div class="space-y-2">
+                      @for (tx of block.transactions; track tx.id) {
+                        <div class="bg-white border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-3 text-sm">
+                          <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                            <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                          </div>
+                          <span class="text-slate-700 font-mono text-xs">{{ tx.sender }}</span>
+                          <svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                          </svg>
+                          <span class="text-slate-700 font-mono text-xs">{{ tx.receiver }}</span>
+                          <span class="ml-auto badge badge-emerald font-semibold">{{ tx.amount }} BTC</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="card p-10 text-center text-slate-400 text-sm">No blocks found in the chain.</div>
+    }
+  </div>
+}
+
+<!-- ════ MINE BLOCK ════ -->
+@if (safePage === 'mine') {
+  <div class="max-w-2xl space-y-5">
+    <h2 class="section-title">
+      <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+      </svg>
+      Mine a New Block
+    </h2>
+
+    <div class="card p-6 space-y-5">
+      <!-- Block Data -->
+      <div>
+        <label class="section-label block mb-1.5">Block Data <span class="text-red-400">*</span></label>
+        <textarea [(ngModel)]="mineData" rows="3" class="input-field resize-none"
+                  placeholder="Enter the data to embed into this block..."></textarea>
+      </div>
+
+      <!-- Transactions -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <label class="section-label">Transactions</label>
+          <button (click)="addTransaction()"
+                  class="text-xs font-medium text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Transaction
+          </button>
+        </div>
+
+        @if (mineTransactions.length) {
+          <div class="space-y-2">
+            @for (tx of mineTransactions; track $index; let i = $index) {
+              <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                <input [(ngModel)]="tx.sender" placeholder="Sender address"
+                       class="flex-1 bg-white border border-slate-200 text-slate-800 rounded-lg px-3 py-2 text-xs
+                              placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
+                <svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <input [(ngModel)]="tx.receiver" placeholder="Receiver address"
+                       class="flex-1 bg-white border border-slate-200 text-slate-800 rounded-lg px-3 py-2 text-xs
+                              placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
+                <input [(ngModel)]="tx.amount" type="number" placeholder="BTC" min="0"
+                       class="w-20 bg-white border border-slate-200 text-slate-800 rounded-lg px-3 py-2 text-xs
+                              placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition" />
+                <button (click)="removeTransaction(i)"
+                        class="w-7 h-7 flex items-center justify-center rounded-lg text-red-400 hover:bg-red-50 transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="bg-slate-50 border border-dashed border-slate-300 rounded-xl p-4 text-center">
+            <p class="text-slate-400 text-sm">No transactions yet.</p>
+            <p class="text-slate-400 text-xs mt-0.5">Click "Add Transaction" to include transfers in this block.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Submit -->
+      <button (click)="mineBlock()" [disabled]="mineLoading || !mineData.trim()" class="btn-primary w-auto">
+        @if (mineLoading) {
+          <app-spinner size="sm" /> Mining... Please wait
+        } @else {
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          Mine Block
+        }
+      </button>
+    </div>
+
+    <!-- Mined Result -->
+    @if (minedBlock) {
+      <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 space-y-3 animate-fade-in">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <p class="font-semibold text-emerald-800">Block #{{ minedBlock.index }} successfully mined!</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="bg-white border border-emerald-200 rounded-xl p-3">
+            <p class="section-label mb-1">Hash</p>
+            <p class="font-mono text-slate-700 break-all">{{ minedBlock.hash }}</p>
+          </div>
+          <div class="bg-white border border-emerald-200 rounded-xl p-3">
+            <p class="section-label mb-1">Nonce</p>
+            <p class="font-mono font-bold text-emerald-700 text-lg">{{ minedBlock.nonce }}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<!-- ════ VERIFY ════ -->
+@if (safePage === 'verify') {
+  <div class="max-w-xl space-y-5">
+    <h2 class="section-title">
+      <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+      Verify Chain Integrity
+    </h2>
+
+    <div class="card p-6 space-y-4">
+      <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex items-start gap-3">
+        <svg class="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-sm text-blue-700">
+          Re-computes and compares SHA-256 hashes for every block in the chain to detect any tampering or corruption.
+        </p>
+      </div>
+
+      <button (click)="verifyChain()" [disabled]="verifyLoading" class="btn-primary w-auto">
+        @if (verifyLoading) {
+          <app-spinner size="sm" /> Verifying chain...
+        } @else {
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+          Run Verification
+        }
+      </button>
+    </div>
+
+    @if (verifyResult) {
+      <div class="rounded-2xl p-6 border space-y-3 animate-fade-in"
+           [class]="verifyResult.valid
+             ? 'bg-emerald-50 border-emerald-200'
+             : 'bg-red-50 border-red-200'">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center"
+               [class]="verifyResult.valid ? 'bg-emerald-100' : 'bg-red-100'">
+            @if (verifyResult.valid) {
+              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            } @else {
+              <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+            }
+          </div>
+          <div>
+            <p class="font-bold" [class]="verifyResult.valid ? 'text-emerald-800' : 'text-red-700'">
+              {{ verifyResult.valid ? 'Chain is Valid ✓' : 'Tampering Detected!' }}
+            </p>
+            <p class="text-sm mt-0.5" [class]="verifyResult.valid ? 'text-emerald-700' : 'text-red-600'">
+              {{ verifyResult.message }}
+            </p>
+          </div>
+        </div>
+        @if (!verifyResult.valid && verifyResult.invalidBlockIndex !== undefined) {
+          <div class="bg-white border border-red-200 rounded-xl px-4 py-2.5 text-sm">
+            <span class="text-slate-500">First invalid block at index: </span>
+            <span class="font-bold text-red-600">#{{ verifyResult.invalidBlockIndex }}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}
+
+<!-- ════ DOCUMENT CHAIN ════ -->
+@if (safePage === 'docs') {
+  <div class="space-y-5">
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <h2 class="section-title">
+        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        Document Chain
+      </h2>
+      @if (!docsLoading) {
+        <span class="badge badge-slate">{{ docs.length }} documents</span>
+      }
+    </div>
+
+    <!-- Sub-tabs -->
+    <div class="flex border-b border-slate-200 gap-1">
+      <button (click)="docTab = 'list'"
+              [class]="docTab === 'list'
+                ? 'px-4 py-2 text-sm font-medium text-orange-600 border-b-2 border-orange-500 -mb-px'
+                : 'px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition'">
+        All Documents
+      </button>
+      <button (click)="docTab = 'upload'"
+              [class]="docTab === 'upload'
+                ? 'px-4 py-2 text-sm font-medium text-orange-600 border-b-2 border-orange-500 -mb-px'
+                : 'px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition'">
+        Hash & Store
+      </button>
+      <button (click)="docTab = 'verify'"
+              [class]="docTab === 'verify'
+                ? 'px-4 py-2 text-sm font-medium text-orange-600 border-b-2 border-orange-500 -mb-px'
+                : 'px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition'">
+        Verify Document
+      </button>
+    </div>
+
+    <!-- ── All Documents ── -->
+    @if (docTab === 'list') {
+      @if (docsLoading) {
+        <div class="card p-8 flex items-center justify-center gap-3 text-slate-400">
+          <app-spinner size="md" /> <span class="text-sm">Loading documents...</span>
+        </div>
+      } @else if (docs.length) {
+        <div class="card overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th class="tbl-head">File</th>
+                  <th class="tbl-head">SHA-256 Hash</th>
+                  <th class="tbl-head">Block</th>
+                  <th class="tbl-head">Size</th>
+                  <th class="tbl-head">Uploaded By</th>
+                  <th class="tbl-head">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                @for (doc of docs; track doc.id) {
+                  <tr class="hover:bg-slate-50 transition">
+                    <td class="tbl-cell">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center shrink-0">
+                          <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <p class="font-medium text-slate-800 text-xs">{{ doc.fileName }}</p>
+                          <p class="text-slate-400 text-xs">{{ doc.fileType }}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="tbl-cell">
+                      <span class="font-mono text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded-lg">
+                        {{ truncateHash(doc.sha256Hash) }}
+                      </span>
+                    </td>
+                    <td class="tbl-cell">
+                      <span class="badge badge-indigo">#{{ doc.blockIndex }}</span>
+                    </td>
+                    <td class="tbl-cell text-slate-500">{{ formatBytes(doc.fileSize) }}</td>
+                    <td class="tbl-cell">
+                      <div class="flex items-center gap-1.5">
+                        <div class="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-bold">
+                          {{ doc.uploadedBy[0].toUpperCase() }}
+                        </div>
+                        <span class="text-slate-600">{{ doc.uploadedBy }}</span>
+                      </div>
+                    </td>
+                    <td class="tbl-cell text-slate-400 text-xs">{{ doc.timestamp | date:'short' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      } @else {
+        <div class="card p-12 flex flex-col items-center justify-center text-center gap-3">
+          <div class="w-14 h-14 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center">
+            <svg class="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <p class="font-semibold text-slate-700">No documents stored yet</p>
+          <p class="text-slate-400 text-sm">Upload a document to hash it and store it on-chain.</p>
+          <button (click)="docTab = 'upload'" class="btn-primary w-auto text-sm mt-1">
+            Hash a Document
+          </button>
+        </div>
+      }
+    }
+
+    <!-- ── Hash & Store ── -->
+    @if (docTab === 'upload') {
+      <div class="max-w-xl space-y-4">
+        <div class="bg-orange-50 border border-orange-200 rounded-xl px-4 py-3 flex items-start gap-3">
+          <svg class="w-5 h-5 text-orange-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-sm text-orange-700">
+            Your document is hashed client-side using SHA-256. Only the hash is stored on the blockchain — the file itself is never uploaded.
+          </p>
+        </div>
+
+        <div class="card p-6 space-y-4">
+          <!-- Drop zone -->
+          <div>
+            <label class="section-label block mb-2">Select Document</label>
+            <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-xl cursor-pointer transition"
+                   [class]="docUploadFile ? 'border-orange-400 bg-orange-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'">
+              @if (docUploadFile) {
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                  </div>
+                  <p class="font-medium text-slate-800 text-sm">{{ docUploadFile.name }}</p>
+                  <p class="text-xs text-slate-400">{{ formatBytes(docUploadFile.size) }}</p>
+                </div>
+              } @else {
+                <div class="flex flex-col items-center gap-2 text-slate-400">
+                  <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                  </svg>
+                  <p class="text-sm font-medium">Click to choose a file</p>
+                  <p class="text-xs">Any file type supported</p>
+                </div>
+              }
+              <input type="file" class="hidden" (change)="onDocUploadSelect($event)" />
+            </label>
+          </div>
+
+          <button (click)="submitDocUpload()" [disabled]="docUploadLoading || !docUploadFile"
+                  class="btn-primary w-auto">
+            @if (docUploadLoading) {
+              <app-spinner size="sm" /> Hashing & storing...
+            } @else {
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+              </svg>
+              Hash & Store on Chain
+            }
+          </button>
+        </div>
+
+        @if (docUploadResult) {
+          <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 space-y-3 animate-fade-in">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <p class="font-semibold text-emerald-800">Document stored on-chain!</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="bg-white border border-emerald-200 rounded-xl p-3 col-span-2">
+                <p class="section-label mb-1">SHA-256 Hash</p>
+                <p class="font-mono text-slate-700 break-all">{{ docUploadResult.sha256Hash }}</p>
+              </div>
+              <div class="bg-white border border-emerald-200 rounded-xl p-3">
+                <p class="section-label mb-1">Block Index</p>
+                <p class="font-semibold text-indigo-600">#{{ docUploadResult.blockIndex }}</p>
+              </div>
+              <div class="bg-white border border-emerald-200 rounded-xl p-3">
+                <p class="section-label mb-1">File Size</p>
+                <p class="text-slate-700">{{ formatBytes(docUploadResult.fileSize) }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── Verify Document ── -->
+    @if (docTab === 'verify') {
+      <div class="max-w-xl space-y-4">
+        <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex items-start gap-3">
+          <svg class="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-sm text-blue-700">
+            Upload a document to compute its SHA-256 hash and check whether it matches any record stored on the blockchain.
+          </p>
+        </div>
+
+        <div class="card p-6 space-y-4">
+          <div>
+            <label class="section-label block mb-2">Select Document to Verify</label>
+            <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-xl cursor-pointer transition"
+                   [class]="docVerifyFile ? 'border-blue-400 bg-blue-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'">
+              @if (docVerifyFile) {
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                  </div>
+                  <p class="font-medium text-slate-800 text-sm">{{ docVerifyFile.name }}</p>
+                  <p class="text-xs text-slate-400">{{ formatBytes(docVerifyFile.size) }}</p>
+                </div>
+              } @else {
+                <div class="flex flex-col items-center gap-2 text-slate-400">
+                  <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                  </svg>
+                  <p class="text-sm font-medium">Click to choose a file</p>
+                  <p class="text-xs">Must match an originally uploaded document</p>
+                </div>
+              }
+              <input type="file" class="hidden" (change)="onDocVerifySelect($event)" />
+            </label>
+          </div>
+
+          <button (click)="submitDocVerify()" [disabled]="docVerifyLoading || !docVerifyFile"
+                  class="btn-primary w-auto">
+            @if (docVerifyLoading) {
+              <app-spinner size="sm" /> Verifying...
+            } @else {
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+              Verify Document
+            }
+          </button>
+        </div>
+
+        @if (docVerifyResult) {
+          <div class="rounded-2xl p-6 border space-y-4 animate-fade-in"
+               [class]="docVerifyResult.verified ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                   [class]="docVerifyResult.verified ? 'bg-emerald-100' : 'bg-red-100'">
+                @if (docVerifyResult.verified) {
+                  <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                } @else {
+                  <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                  </svg>
+                }
+              </div>
+              <div>
+                <p class="font-bold" [class]="docVerifyResult.verified ? 'text-emerald-800' : 'text-red-700'">
+                  {{ docVerifyResult.verified ? 'Document Verified ✓' : 'Document Not Found on Chain' }}
+                </p>
+                <p class="text-sm mt-0.5" [class]="docVerifyResult.verified ? 'text-emerald-700' : 'text-red-600'">
+                  {{ docVerifyResult.message }}
+                </p>
+              </div>
+            </div>
+
+            @if (docVerifyResult.verified) {
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="bg-white border rounded-xl p-3"
+                     [class]="docVerifyResult.verified ? 'border-emerald-200' : 'border-red-200'">
+                  <p class="section-label mb-1">File Name</p>
+                  <p class="font-medium text-slate-700">{{ docVerifyResult.fileName }}</p>
+                </div>
+                <div class="bg-white border rounded-xl p-3"
+                     [class]="docVerifyResult.verified ? 'border-emerald-200' : 'border-red-200'">
+                  <p class="section-label mb-1">Stored on Block</p>
+                  <p class="font-semibold text-indigo-600">#{{ docVerifyResult.blockIndex }}</p>
+                </div>
+                <div class="bg-white border border-emerald-200 rounded-xl p-3 col-span-2">
+                  <p class="section-label mb-1">SHA-256 Hash</p>
+                  <p class="font-mono text-slate-700 break-all">{{ docVerifyResult.sha256Hash }}</p>
+                </div>
+                <div class="bg-white border border-emerald-200 rounded-xl p-3 col-span-2">
+                  <p class="section-label mb-1">Originally Stored At</p>
+                  <p class="text-slate-700">{{ docVerifyResult.timestamp | date:'medium' }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+}
