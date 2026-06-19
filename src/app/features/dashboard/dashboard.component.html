@@ -66,6 +66,12 @@
             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
         }
+        @case ('audit') {
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+        }
         @case ('user') {
         <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -215,6 +221,19 @@
             <p class="text-xs text-slate-400 mt-0.5">Hash & verify documents</p>
           </button>
 
+          <button (click)="navigate('audit-trail')"
+            class="card p-5 text-left hover:shadow-md hover:border-violet-200 transition group">
+            <div
+              class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center mb-3 group-hover:bg-violet-100 transition">
+              <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+            </div>
+            <p class="font-semibold text-slate-800 text-sm">Audit Trail</p>
+            <p class="text-xs text-slate-400 mt-0.5">AI decision records</p>
+          </button>
+
           <button (click)="navigate('profile')"
             class="card p-5 text-left hover:shadow-md hover:border-blue-200 transition group">
             <div
@@ -238,6 +257,13 @@
       @if (activePage === 'chain' || activePage === 'mine' || activePage === 'verify' || activePage === 'docs') {
       <div class="animate-fade-in">
         <app-blockchain [page]="activePage" />
+      </div>
+      }
+
+      <!-- ════ AUDIT TRAIL PAGE ════ -->
+      @if (activePage === 'audit-trail') {
+      <div class="animate-fade-in">
+        <app-audit-trail />
       </div>
       }
 

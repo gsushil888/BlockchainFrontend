@@ -1,0 +1,1076 @@
+<div class="space-y-6 animate-fade-in">
+
+  <!-- ══════════════════ HEADER ══════════════════ -->
+  <div class="relative overflow-hidden rounded-2xl text-white px-8 py-7"
+       style="background:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);">
+    <div class="absolute inset-0 opacity-[0.06]"
+         style="background-image:linear-gradient(rgba(255,255,255,.3) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(255,255,255,.3) 1px,transparent 1px);
+                background-size:32px 32px;"></div>
+    <div class="absolute -top-10 -right-10 w-64 h-64 rounded-full opacity-20 blur-3xl"
+         style="background:radial-gradient(circle,#a78bfa,transparent 70%);"></div>
+    <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+             style="background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.3);">
+          <svg class="w-6 h-6 text-violet-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+                 M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2
+                 m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-semibold uppercase tracking-widest text-violet-300/80">GovAI Shield</span>
+            <span class="h-3.5 w-px bg-violet-500/40"></span>
+            <span class="flex items-center gap-1 text-xs text-emerald-400 font-medium">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>Live
+            </span>
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight">Audit Trail</h1>
+          <p class="text-sm text-slate-400 mt-0.5">Immutable AI decision records — RBI FREE-AI &amp; DPDP compliant</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 flex-wrap">
+        <div class="flex flex-col items-center px-4 py-2.5 rounded-xl"
+             style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);">
+          <span class="text-xl font-bold text-white">{{ compliance?.totalAuditRecords ?? 0 | number }}</span>
+          <span class="text-xs text-slate-400 mt-0.5">Total Records</span>
+        </div>
+        <div class="flex flex-col items-center px-4 py-2.5 rounded-xl"
+             style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);">
+          <span class="text-xl font-bold text-emerald-400">{{ consentPct() }}%</span>
+          <span class="text-xs text-slate-400 mt-0.5">Consent Rate</span>
+        </div>
+        <div class="flex flex-col items-center px-4 py-2.5 rounded-xl"
+             style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);">
+          <span class="text-xl font-bold text-violet-300">{{ governance?.approvalPct ?? 0 }}%</span>
+          <span class="text-xs text-slate-400 mt-0.5">Approval Rate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ TABS ══════════════════ -->
+  <div class="flex border-b border-slate-200">
+    @for (tab of [
+      {id:'dashboard', label:'Dashboard'},
+      {id:'events',    label:'Audit Events'},
+      {id:'compliance',label:'Compliance'},
+      {id:'models',    label:'Model Registry'}
+    ]; track tab.id) {
+    <button (click)="switchTab($any(tab.id))"
+      class="px-5 py-3 text-sm font-medium transition-all duration-150 border-b-2 -mb-px"
+      [class]="activeTab===tab.id
+        ? 'border-violet-600 text-violet-700'
+        : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'">
+      {{ tab.label }}
+    </button>
+    }
+  </div>
+
+  <!-- ══════════════════ TAB · DASHBOARD ══════════════════ -->
+  @if (activeTab === 'dashboard') {
+  <div class="space-y-6 animate-fade-in">
+    @if (dashLoading) {
+    <div class="card flex items-center justify-center gap-3 p-12 text-slate-400">
+      <app-spinner size="md"/><span class="text-sm">Loading dashboard…</span>
+    </div>
+    } @else {
+
+    <!-- KPI Operational row -->
+    <div>
+      <p class="section-label mb-3">Operational</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="kpi-card kpi-violet">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">Total Decisions</p>
+              <p class="text-3xl font-extrabold text-slate-800 mt-1 leading-none">{{ compliance?.totalAuditRecords ?? 0 | number }}</p>
+              <p class="text-xs text-slate-400 mt-2">All-time audit records</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-emerald">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">Approval Rate</p>
+              <p class="text-3xl font-extrabold text-emerald-600 mt-1 leading-none">{{ governance?.approvalPct ?? 0 }}%</p>
+              <p class="text-xs text-slate-400 mt-2">AI decisions approved</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-red">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">Denial Rate</p>
+              <p class="text-3xl font-extrabold text-red-600 mt-1 leading-none">{{ governance?.denialPct ?? 0 }}%</p>
+              <p class="text-xs text-slate-400 mt-2">AI decisions denied</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Compliance row -->
+    <div>
+      <p class="section-label mb-3">Compliance</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="kpi-card kpi-amber">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">PII Events</p>
+              <p class="text-3xl font-extrabold text-slate-800 mt-1 leading-none">{{ compliance?.piiEvents ?? 0 | number }}</p>
+              <p class="text-xs text-slate-400 mt-2">Personal data touched</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-red">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">Missing Consent</p>
+              <p class="text-3xl font-extrabold mt-1 leading-none"
+                [class]="(compliance?.missingConsent??0)>0?'text-red-600':'text-emerald-600'">
+                {{ compliance?.missingConsent ?? 0 | number }}
+              </p>
+              <p class="text-xs text-slate-400 mt-2">Records without consent</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-orange">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">External LLM</p>
+              <p class="text-3xl font-extrabold text-slate-800 mt-1 leading-none">{{ compliance?.externalLlmUsage ?? 0 | number }}</p>
+              <p class="text-xs text-slate-400 mt-2">Third-party model calls</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-violet">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">Valid Consent</p>
+              <p class="text-3xl font-extrabold text-violet-600 mt-1 leading-none">{{ consentPct() }}%</p>
+              <p class="text-xs text-slate-400 mt-2">Consent coverage rate</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04
+                     A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Governance breakdown -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div class="lg:col-span-2 card p-5 space-y-5">
+        <div class="flex items-center justify-between">
+          <p class="section-title">Decision Breakdown</p>
+          <span class="badge badge-slate">{{ governance?.totalDecisions ?? 0 | number }} total</span>
+        </div>
+        @if (decisionBreakdownEntries().length === 0) {
+        <p class="text-sm text-slate-400">No data available.</p>
+        } @else {
+        <div class="space-y-5">
+          @for (entry of decisionBreakdownEntries(); track entry.key) {
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="badge" [class]="decisionBadgeClass(entry.key)">{{ entry.key }}</span>
+              <span class="text-sm font-bold text-slate-700">{{ entry.value | number }}</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div class="h-2 rounded-full transition-all duration-700"
+                [style.width.%]="(governance?.totalDecisions??0)>0?(entry.value/(governance?.totalDecisions??1))*100:0"
+                [class]="entry.key==='APPROVE'?'bg-emerald-500':entry.key==='DENY'?'bg-red-500':'bg-amber-400'">
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+        }
+      </div>
+      <div class="lg:col-span-3 card p-5 space-y-3">
+        <p class="section-title">Quick Actions</p>
+        <p class="text-sm text-slate-500">Switch to <strong>Audit Events</strong> tab to view time-windowed KPIs, the full event table, and export.</p>
+        <button (click)="switchTab('events')"
+          class="btn-primary text-sm py-2 px-5 mt-2">
+          View Audit Events →
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+
+  <!-- ══════════════════ TAB · AUDIT EVENTS ══════════════════ -->
+  @if (activeTab === 'events') {
+  <div class="space-y-5 animate-fade-in">
+
+    <!-- ── Top bar: window pills + export ── -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <!-- Date range pills -->
+      <div class="flex items-center gap-1 bg-slate-100 rounded-xl p-1 border border-slate-200">
+        @for (r of dateRanges; track r.id) {
+        <button (click)="setDateRange(r.id)"
+          class="px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150"
+          [class]="activeDateRange===r.id
+            ? 'bg-violet-600 text-white shadow-sm'
+            : 'text-slate-500 hover:text-slate-800 hover:bg-white/70'">
+          {{ r.label }}
+        </button>
+        }
+      </div>
+      <!-- Export -->
+      <button (click)="exportCsv()" [disabled]="exportLoading"
+        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold
+               bg-white border border-slate-200 text-slate-700 shadow-sm transition-all
+               hover:bg-slate-50 hover:border-violet-300 hover:text-violet-700
+               disabled:opacity-50 disabled:cursor-not-allowed">
+        @if (exportLoading) {
+        <app-spinner size="sm"/>
+        } @else {
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        </svg>
+        }
+        {{ exportLoading ? 'Exporting…' : 'Export CSV' }}
+      </button>
+    </div>
+
+    <!-- ── 5 KPI tiles (from /summary) ── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+
+      <div class="kpi-card kpi-violet">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="section-label">Total Events</p>
+            <p class="text-3xl font-extrabold text-slate-800 mt-1 leading-none">
+              {{ summary?.totalAuditEvents ?? eventsTotal | number }}
+            </p>
+            <p class="text-xs text-slate-400 mt-2">Audit events in window</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-red">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="section-label">High Risk Decisions</p>
+            <p class="text-3xl font-extrabold text-red-600 mt-1 leading-none">
+              {{ summary?.highRiskDecisions ?? 0 | number }}
+            </p>
+            <p class="text-xs text-slate-400 mt-2">HIGH + CRITICAL events</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-amber">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="section-label">PII Access Events</p>
+            <p class="text-3xl font-extrabold text-amber-600 mt-1 leading-none">
+              {{ summary?.piiAccessEvents ?? 0 | number }}
+            </p>
+            <p class="text-xs text-slate-400 mt-2">Personal data accessed</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-orange">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="section-label">Failed AI Responses</p>
+            <p class="text-3xl font-extrabold text-orange-600 mt-1 leading-none">
+              {{ summary?.failedAiResponses ?? 0 | number }}
+            </p>
+            <p class="text-xs text-slate-400 mt-2">AI inference failures</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-blue">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="section-label">Exceptions</p>
+            <p class="text-3xl font-extrabold text-blue-600 mt-1 leading-none">
+              {{ summary?.systemExceptions ?? 0 | number }}
+            </p>
+            <p class="text-xs text-slate-400 mt-2">System exceptions raised</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Filter bar ── -->
+    <div class="card p-5">
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
+          <svg class="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19
+                 a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+          </svg>
+        </div>
+        <span class="text-sm font-semibold text-slate-700">Filter Events</span>
+        <span class="badge badge-violet text-xs">
+          {{ activeDateRange === 'TODAY' ? 'Today' : activeDateRange === 'LAST_7_DAYS' ? 'Last 7 days' : 'Last 30 days' }}
+        </span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <select class="input-field" [(ngModel)]="filters.decisionType">
+          @for (t of decisionTypes; track t) {
+          <option [value]="t">{{ t || 'All Decisions' }}</option>
+          }
+        </select>
+        <input class="input-field" placeholder="Model ID" [(ngModel)]="filters.modelId"/>
+        <select class="input-field" [(ngModel)]="filters.riskLevel">
+          @for (r of riskLevels; track r) {
+          <option [value]="r">{{ r || 'All Risk Levels' }}</option>
+          }
+        </select>
+      </div>
+      <div class="flex items-center gap-2 mt-4">
+        <button class="btn-primary text-sm py-2 px-5" (click)="applyFilters()">Apply</button>
+        <button class="btn-secondary text-sm py-2 px-4" (click)="clearFilters()">Clear</button>
+      </div>
+    </div>
+
+    <!-- ── Audit Events table ── -->
+    <div class="card overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
+            <svg class="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+            </svg>
+          </div>
+          <p class="section-title">Audit Events</p>
+        </div>
+        <span class="badge badge-slate">{{ eventsTotal | number }} records</span>
+      </div>
+
+      @if (eventsLoading) {
+      <div class="flex items-center justify-center gap-3 p-12 text-slate-400">
+        <app-spinner size="md"/><span class="text-sm">Loading events…</span>
+      </div>
+      } @else if (events.length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 gap-3 text-slate-400">
+        <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          </svg>
+        </div>
+        <p class="text-sm font-medium">No audit events found</p>
+        <p class="text-xs">Try adjusting filters or changing the date window</p>
+      </div>
+      } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200">
+              <th class="tbl-head">Event ID</th>
+              <th class="tbl-head">Date</th>
+              <th class="tbl-head">Timestamp (ms)</th>
+              <th class="tbl-head">Model ID</th>
+              <th class="tbl-head">Confidence</th>
+              <th class="tbl-head">Latency</th>
+              <th class="tbl-head">Risk</th>
+              <th class="tbl-head">Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of events; track e.auditEventId; let i=$index) {
+            <tr class="hover:bg-violet-50/40 transition-colors border-b border-slate-100/70"
+                [class]="riskRowClass(e) || (i%2===0 ? 'bg-white' : 'bg-slate-50/40')">
+
+              <!-- EVENT ID -->
+              <td class="tbl-cell">
+                <span class="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded-md text-slate-600 whitespace-nowrap">
+                  {{ e.auditEventId }}
+                </span>
+              </td>
+
+              <!-- DATE -->
+              <td class="tbl-cell text-xs text-slate-600 whitespace-nowrap">
+                {{ e.date | date:'dd MMM yyyy' }}
+              </td>
+
+              <!-- TIMESTAMP MS -->
+              <td class="tbl-cell font-mono text-xs text-slate-400 whitespace-nowrap">
+                {{ e.timestamp }}
+              </td>
+
+              <!-- MODEL ID -->
+              <td class="tbl-cell">
+                <span class="text-xs font-semibold text-slate-700">{{ e.modelId }}</span>
+              </td>
+
+              <!-- CONFIDENCE -->
+              <td class="tbl-cell">
+                <div class="flex items-center gap-2 min-w-[90px]">
+                  <div class="flex-1 bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                    <div class="h-1.5 rounded-full bg-violet-500"
+                         [style.width.%]="e.confidenceScore * 100"></div>
+                  </div>
+                  <span class="text-xs font-semibold text-slate-600 w-9 text-right">
+                    {{ (e.confidenceScore * 100).toFixed(1) }}%
+                  </span>
+                </div>
+              </td>
+
+              <!-- LATENCY -->
+              <td class="tbl-cell whitespace-nowrap">
+                <span class="text-xs" [class]="latencyClass(e.decisionLatencyMs)">
+                  {{ e.decisionLatencyMs | number }} ms
+                </span>
+              </td>
+
+              <!-- RISK -->
+              <td class="tbl-cell">
+                <div class="flex items-center gap-1">
+                  @if (e.highRisk) {
+                  <span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
+                  }
+                  <span class="badge" [class]="riskBadgeClass(e.riskLevel)">{{ e.riskLevel }}</span>
+                </div>
+              </td>
+
+              <!-- DETAIL -->
+              <td class="tbl-cell">
+                <button (click)="openDetail(e)"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+                         bg-violet-50 text-violet-700 border border-violet-200
+                         hover:bg-violet-100 hover:border-violet-400 transition-all">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                         -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  View
+                </button>
+              </td>
+
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
+
+    <!-- ── Exceptions panel ── -->
+    <div class="card overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center">
+            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <p class="section-title">Exceptions &amp; Failures</p>
+        </div>
+        <span class="badge badge-red">{{ exceptionsTotal | number }} total</span>
+      </div>
+
+      @if (excLoading) {
+      <div class="flex items-center justify-center gap-3 p-8 text-slate-400">
+        <app-spinner size="md"/><span class="text-sm">Loading exceptions…</span>
+      </div>
+      } @else if (exceptions.length === 0) {
+      <div class="flex items-center justify-center gap-2 py-10 text-slate-400">
+        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <p class="text-sm font-medium text-emerald-600">No exceptions in this window</p>
+      </div>
+      } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200">
+              <th class="tbl-head">Timestamp</th>
+              <th class="tbl-head">Audit Event ID</th>
+              <th class="tbl-head">Model ID</th>
+              <th class="tbl-head">Type</th>
+              <th class="tbl-head">Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ex of exceptions; track ex.id; let i=$index) {
+            <tr class="hover:bg-red-50/20 transition-colors border-b border-slate-100/70"
+                [class]="i%2===0?'bg-white':'bg-slate-50/40'">
+              <td class="tbl-cell text-xs text-slate-500 whitespace-nowrap">
+                {{ ex.timestamp | date:'dd MMM, HH:mm:ss' }}
+              </td>
+              <td class="tbl-cell">
+                <span class="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded-md text-slate-600">
+                  {{ ex.auditEventId }}
+                </span>
+              </td>
+              <td class="tbl-cell text-xs font-semibold text-slate-700">{{ ex.modelId }}</td>
+              <td class="tbl-cell">
+                <span class="badge"
+                  [class]="ex.exceptionType==='FAILED_AI_RESPONSE'?'badge-orange':'badge-red'">
+                  {{ ex.exceptionType === 'FAILED_AI_RESPONSE' ? 'Failed AI' : 'System' }}
+                </span>
+              </td>
+              <td class="tbl-cell text-xs text-slate-500 max-w-[260px] truncate" [title]="ex.message">
+                {{ ex.message }}
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
+
+  </div>
+  }
+
+
+  <!-- ══════════════════ TAB · COMPLIANCE ══════════════════ -->
+  @if (activeTab === 'compliance') {
+  <div class="space-y-6 animate-fade-in">
+    @if (dashLoading) {
+    <div class="card flex items-center justify-center gap-3 p-12 text-slate-400">
+      <app-spinner size="md"/><span class="text-sm">Loading compliance data…</span>
+    </div>
+    } @else {
+    <div>
+      <p class="section-label mb-3">Summary</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="kpi-card kpi-violet">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">Total Records</p>
+              <p class="text-3xl font-extrabold text-slate-800 mt-1 leading-none">{{ compliance?.totalAuditRecords ?? 0 | number }}</p>
+              <p class="text-xs text-slate-400 mt-2">All audit records</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-amber">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">PII Events</p>
+              <p class="text-3xl font-extrabold text-amber-600 mt-1 leading-none">{{ compliance?.piiEvents ?? 0 | number }}</p>
+              <p class="text-xs text-slate-400 mt-2">Personal data accessed</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-red">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">Missing Consent</p>
+              <p class="text-3xl font-extrabold mt-1 leading-none"
+                [class]="(compliance?.missingConsent??0)>0?'text-red-600':'text-emerald-600'">
+                {{ compliance?.missingConsent ?? 0 | number }}
+              </p>
+              <p class="text-xs text-slate-400 mt-2">Consent gaps detected</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card kpi-orange">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="section-label">External LLM</p>
+              <p class="text-3xl font-extrabold text-orange-600 mt-1 leading-none">{{ compliance?.externalLlmUsage ?? 0 | number }}</p>
+              <p class="text-xs text-slate-400 mt-2">Third-party model calls</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="card p-6 space-y-4">
+        <p class="section-title">Consent Report</p>
+        @if (consentReport) {
+        <div class="divide-y divide-slate-100">
+          <div class="flex items-center justify-between py-3">
+            <span class="text-sm text-slate-500">Total Records</span>
+            <span class="text-sm font-bold text-slate-800">{{ consentReport.total | number }}</span>
+          </div>
+          <div class="flex items-center justify-between py-3">
+            <span class="text-sm text-slate-500">Valid Consent</span>
+            <span class="badge badge-emerald">✓ {{ consentReport.validConsent | number }}</span>
+          </div>
+          <div class="flex items-center justify-between py-3">
+            <span class="text-sm text-slate-500">Missing Consent</span>
+            <span class="badge" [class]="consentReport.missingConsent>0?'badge-red':'badge-emerald'">
+              {{ consentReport.missingConsent | number }}
+            </span>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span class="font-medium">Consent Coverage</span>
+            <span class="font-bold text-slate-600">{{ consentPct() }}%</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+            <div class="h-3 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-700"
+                 [style.width.%]="consentPct()"></div>
+          </div>
+        </div>
+        }
+      </div>
+      <div class="card p-6 space-y-4">
+        <p class="section-title">PII Usage Breakdown</p>
+        @if (piiEntries().length===0) {
+        <p class="text-sm text-slate-400">No PII data available.</p>
+        } @else {
+        <div class="space-y-4">
+          @for (entry of piiEntries(); track entry.key) {
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-600 uppercase tracking-wide">{{ entry.key }}</span>
+              <span class="text-sm font-bold text-amber-700">{{ entry.value }}</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+              <div class="h-2.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-500"
+                [style.width.%]="compliance&&compliance.piiEvents>0?(entry.value/compliance.piiEvents)*100:0">
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+  <!-- ══════════════════ TAB · MODEL REGISTRY ══════════════════ -->
+  @if (activeTab === 'models') {
+  <div class="space-y-4 animate-fade-in">
+    <div class="card p-5">
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
+          <svg class="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19
+                 a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+          </svg>
+        </div>
+        <span class="text-sm font-semibold text-slate-700">Filter Models</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <input class="input-field" placeholder="Model ID"               [(ngModel)]="modelFilters.modelId"/>
+        <input class="input-field" placeholder="Provider (e.g. OPENAI)" [(ngModel)]="modelFilters.provider"/>
+        <input class="input-field" placeholder="Type (e.g. CREDIT)"     [(ngModel)]="modelFilters.modelType"/>
+      </div>
+      <div class="flex items-center gap-2 mt-4">
+        <button class="btn-primary text-sm py-2 px-5" (click)="searchModels()">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+          </svg>
+          Search
+        </button>
+        <button class="btn-secondary text-sm py-2 px-4" (click)="clearModelFilters()">Clear</button>
+      </div>
+    </div>
+
+    <div class="card overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
+            <svg class="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+            </svg>
+          </div>
+          <p class="section-title">Registered Models</p>
+        </div>
+        <span class="badge badge-slate">{{ modelsTotal | number }} total</span>
+      </div>
+      @if (modelsLoading) {
+      <div class="flex items-center justify-center gap-3 p-12 text-slate-400">
+        <app-spinner size="md"/><span class="text-sm">Loading models…</span>
+      </div>
+      } @else if (models.length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 gap-3 text-slate-400">
+        <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18"/>
+          </svg>
+        </div>
+        <p class="text-sm font-medium">No models registered</p>
+      </div>
+      } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200">
+              <th class="tbl-head w-10">#</th>
+              <th class="tbl-head">Model ID</th>
+              <th class="tbl-head">Version</th>
+              <th class="tbl-head">Type</th>
+              <th class="tbl-head">Provider</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of models; track m.id; let i=$index) {
+            <tr class="hover:bg-violet-50/30 transition-colors border-b border-slate-100/70"
+                [class]="i%2===0?'bg-white':'bg-slate-50/40'">
+              <td class="tbl-cell text-slate-400 text-xs font-mono">{{ i+1 }}</td>
+              <td class="tbl-cell font-semibold text-slate-800">{{ m.modelId }}</td>
+              <td class="tbl-cell">
+                <span class="font-mono text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">{{ m.modelVersion }}</span>
+              </td>
+              <td class="tbl-cell"><span class="badge badge-indigo">{{ m.modelType }}</span></td>
+              <td class="tbl-cell"><span class="badge badge-purple">{{ m.provider }}</span></td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- ══════════════════ DETAIL DRAWER ══════════════════ -->
+  @if (selectedEvent) {
+
+  <!-- Backdrop -->
+  <div class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+       (click)="closeDetail()"></div>
+
+  <!-- Slide-over panel -->
+  <div class="fixed top-0 right-0 z-50 h-full w-full max-w-lg bg-white shadow-2xl
+              flex flex-col overflow-hidden animate-slide-in">
+
+    <!-- Header -->
+    <div class="relative overflow-hidden px-6 py-5 text-white shrink-0"
+         style="background:linear-gradient(135deg,#0f0c29 0%,#302b63 55%,#4c1d95 100%);">
+      <div class="absolute inset-0 opacity-[0.07]"
+           style="background-image:linear-gradient(rgba(255,255,255,.4) 1px,transparent 1px),
+                  linear-gradient(90deg,rgba(255,255,255,.4) 1px,transparent 1px);
+                  background-size:24px 24px;"></div>
+      <div class="absolute -bottom-8 -right-8 w-40 h-40 rounded-full opacity-20 blur-2xl"
+           style="background:radial-gradient(circle,#a78bfa,transparent 70%);"></div>
+      <div class="relative z-10 flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+               style="background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.35);">
+            <svg class="w-5 h-5 text-violet-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+                   M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs text-violet-300/80 uppercase tracking-widest font-semibold mb-0.5">Audit Event Detail</p>
+            <p class="font-mono text-sm font-bold text-white">{{ selectedEvent.auditEventId }}</p>
+          </div>
+        </div>
+        <button (click)="closeDetail()"
+          class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0
+                 hover:bg-white/10 text-violet-300 hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Status chips -->
+      <div class="relative z-10 flex items-center gap-2 mt-4 flex-wrap">
+        @if (selectedEvent.decisionType) {
+        <span class="badge" [class]="decisionBadgeClass(selectedEvent.decisionType)">
+          {{ selectedEvent.decisionType }}
+        </span>
+        }
+        <span class="badge" [class]="riskBadgeClass(selectedEvent.riskLevel)">
+          {{ selectedEvent.riskLevel }} RISK
+        </span>
+        @if (selectedEvent.piiAccessFlag) {
+        <span class="badge badge-amber">PII ACCESS</span>
+        }
+        @if (selectedEvent.highRisk) {
+        <span class="badge badge-red">
+          <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse mr-1"></span>HIGH RISK
+        </span>
+        }
+      </div>
+    </div>
+
+    <!-- Scrollable body -->
+    <div class="flex-1 overflow-y-auto">
+
+      <!-- Event Information -->
+      <div class="px-6 py-5 border-b border-slate-100">
+        <p class="section-label mb-3">Event Information</p>
+        <div class="divide-y divide-slate-100">
+          <div class="flex items-center justify-between py-3">
+            <span class="text-xs font-medium text-slate-500">Event ID</span>
+            <span class="font-mono text-xs bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700">
+              {{ selectedEvent.auditEventId }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between py-3">
+            <span class="text-xs font-medium text-slate-500">Date</span>
+            <span class="text-sm font-semibold text-slate-800">
+              {{ selectedEvent.date | date:'dd MMM yyyy, HH:mm:ss' }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between py-3">
+            <span class="text-xs font-medium text-slate-500">Timestamp (ms)</span>
+            <span class="font-mono text-xs text-slate-500">{{ selectedEvent.timestamp }}</span>
+          </div>
+          <div class="flex items-center justify-between py-3">
+            <span class="text-xs font-medium text-slate-500">Model ID</span>
+            <span class="text-sm font-bold text-slate-800">{{ selectedEvent.modelId }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Decision Metrics -->
+      <div class="px-6 py-5 border-b border-slate-100 space-y-4">
+        <p class="section-label">AI Decision Metrics</p>
+        <!-- Confidence bar -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-500">Confidence Score</span>
+            <span class="text-sm font-extrabold text-violet-700">
+              {{ (selectedEvent.confidenceScore * 100).toFixed(2) }}%
+            </span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+            <div class="h-3 rounded-full transition-all duration-700"
+                 [style.width.%]="selectedEvent.confidenceScore * 100"
+                 [class]="selectedEvent.confidenceScore >= 0.8
+                   ? 'bg-gradient-to-r from-violet-400 to-violet-600'
+                   : selectedEvent.confidenceScore >= 0.5
+                   ? 'bg-gradient-to-r from-amber-400 to-amber-500'
+                   : 'bg-gradient-to-r from-red-400 to-red-500'">
+            </div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400">
+            <span>0%</span><span>50%</span><span>100%</span>
+          </div>
+        </div>
+        <!-- Latency + Risk tiles -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <p class="text-xs text-slate-400 mb-1">Decision Latency</p>
+            <p class="text-2xl font-extrabold" [class]="latencyClass(selectedEvent.decisionLatencyMs)">
+              {{ selectedEvent.decisionLatencyMs | number }}
+            </p>
+            <p class="text-xs text-slate-400 mt-0.5">milliseconds</p>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+            <p class="text-xs text-slate-400 mb-1">Risk Level</p>
+            <p class="text-2xl font-extrabold"
+               [class]="selectedEvent.riskLevel==='HIGH'||selectedEvent.riskLevel==='CRITICAL'
+                 ? 'text-red-600'
+                 : selectedEvent.riskLevel==='MEDIUM' ? 'text-amber-600' : 'text-emerald-600'">
+              {{ selectedEvent.riskLevel }}
+            </p>
+            <p class="text-xs text-slate-400 mt-0.5">assessed by AI</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compliance Flags -->
+      <div class="px-6 py-5 border-b border-slate-100">
+        <p class="section-label mb-3">Compliance Flags</p>
+        <div class="grid grid-cols-2 gap-3">
+
+          <div class="rounded-xl p-4 border flex items-center gap-3"
+               [class]="selectedEvent.piiAccessFlag
+                 ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200'">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                 [class]="selectedEvent.piiAccessFlag ? 'bg-amber-100' : 'bg-slate-100'">
+              <svg class="w-4 h-4"
+                   [class]="selectedEvent.piiAccessFlag ? 'text-amber-600' : 'text-slate-400'"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                     -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold"
+                 [class]="selectedEvent.piiAccessFlag ? 'text-amber-800' : 'text-slate-600'">
+                PII Access
+              </p>
+              <p class="text-xs mt-0.5"
+                 [class]="selectedEvent.piiAccessFlag ? 'text-amber-600' : 'text-slate-400'">
+                {{ selectedEvent.piiAccessFlag ? 'Personal data accessed' : 'No PII accessed' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="rounded-xl p-4 border flex items-center gap-3"
+               [class]="selectedEvent.highRisk
+                 ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-200'">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                 [class]="selectedEvent.highRisk ? 'bg-red-100' : 'bg-slate-100'">
+              <svg class="w-4 h-4"
+                   [class]="selectedEvent.highRisk ? 'text-red-600' : 'text-slate-400'"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94
+                     a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold"
+                 [class]="selectedEvent.highRisk ? 'text-red-800' : 'text-slate-600'">
+                High Risk Flag
+              </p>
+              <p class="text-xs mt-0.5"
+                 [class]="selectedEvent.highRisk ? 'text-red-500' : 'text-slate-400'">
+                {{ selectedEvent.highRisk ? 'Flagged for review' : 'No risk flag' }}
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Detail notes -->
+      @if (selectedEvent.detail) {
+      <div class="px-6 py-5 border-b border-slate-100">
+        <p class="section-label mb-3">Detail Notes</p>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <p class="text-sm text-slate-700 leading-relaxed">{{ selectedEvent.detail }}</p>
+        </div>
+      </div>
+      }
+
+      <!-- Raw Identifiers -->
+      <div class="px-6 py-5">
+        <p class="section-label mb-3">Raw Identifiers</p>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-2.5 border border-slate-200">
+            <span class="text-xs text-slate-400 font-medium">auditEventId</span>
+            <span class="font-mono text-xs text-slate-600">{{ selectedEvent.auditEventId }}</span>
+          </div>
+          <div class="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-2.5 border border-slate-200">
+            <span class="text-xs text-slate-400 font-medium">timestamp</span>
+            <span class="font-mono text-xs text-slate-600">{{ selectedEvent.timestamp }}</span>
+          </div>
+          <div class="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-2.5 border border-slate-200">
+            <span class="text-xs text-slate-400 font-medium">modelId</span>
+            <span class="font-mono text-xs text-slate-600">{{ selectedEvent.modelId }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 shrink-0 flex items-center justify-between">
+      <span class="text-xs text-slate-400">Read-only — immutable blockchain record</span>
+      <button (click)="closeDetail()" class="btn-secondary text-sm py-2 px-5">Close</button>
+    </div>
+
+  </div>
+  }
+
+</div>
