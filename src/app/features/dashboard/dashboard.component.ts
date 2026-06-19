@@ -6,6 +6,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { SpinnerComponent } from '../../shared/components/spinner.component';
 import { ApiError } from '../../core/models/api-response.model';
 import { BlockchainComponent } from './blockchain.component';
+import { AuditTrailComponent } from './audit-trail.component';
 
 export interface UserDto {
   id: number;
@@ -16,12 +17,12 @@ export interface UserDto {
   profilePicUrl?: string | null;
 }
 
-export type Page = 'overview' | 'chain' | 'mine' | 'verify' | 'docs' | 'users' | 'profile';
+export type Page = 'overview' | 'chain' | 'mine' | 'verify' | 'docs' | 'users' | 'profile' | 'audit-trail';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, SpinnerComponent, BlockchainComponent],
+  imports: [CommonModule, SpinnerComponent, BlockchainComponent, AuditTrailComponent],
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit {
@@ -43,6 +44,7 @@ export class DashboardComponent implements OnInit {
     { id: 'mine',     label: 'Mine Block',     icon: 'bolt'   },
     { id: 'verify',   label: 'Verify Chain',   icon: 'shield' },
     { id: 'docs',     label: 'Document Chain', icon: 'doc'    },
+    { id: 'audit-trail', label: 'Audit Trail',   icon: 'audit'  },
     { id: 'users',    label: 'Users',          icon: 'users', adminOnly: true },
     { id: 'profile',  label: 'My Profile',     icon: 'user'   },
   ];
@@ -53,6 +55,7 @@ export class DashboardComponent implements OnInit {
     mine:     'Mine a Block',
     verify:   'Verify Chain',
     docs:     'Document Chain',
+    'audit-trail': 'Audit Trail',
     users:    'All Users',
     profile:  'My Profile'
   };

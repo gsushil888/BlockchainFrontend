@@ -28,6 +28,18 @@
     @apply bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex items-center gap-4;
   }
 
+  /* ── KPI tiles with colored left-border accent ── */
+  .kpi-card {
+    @apply bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-1
+           border-l-4 relative overflow-hidden;
+  }
+  .kpi-violet  { @apply border-l-violet-500; }
+  .kpi-emerald { @apply border-l-emerald-500; }
+  .kpi-red     { @apply border-l-red-500; }
+  .kpi-amber   { @apply border-l-amber-500; }
+  .kpi-orange  { @apply border-l-orange-500; }
+  .kpi-blue    { @apply border-l-blue-500; }
+
   /* ── Inputs ── */
   .input-field {
     @apply w-full bg-white border border-slate-300 text-slate-800 rounded-lg px-4 py-2.5 text-sm
@@ -66,7 +78,11 @@
   .badge-purple { @apply bg-purple-50 text-purple-700 border border-purple-200; }
   .badge-emerald { @apply bg-emerald-50 text-emerald-700 border border-emerald-200; }
   .badge-red     { @apply bg-red-50 text-red-700 border border-red-200; }
+  .badge-amber  { @apply bg-amber-50 text-amber-700 border border-amber-200; }
   .badge-slate   { @apply bg-slate-100 text-slate-600 border border-slate-200; }
+  .badge-violet  { @apply bg-violet-50 text-violet-700 border border-violet-200; }
+  .badge-orange  { @apply bg-orange-50 text-orange-700 border border-orange-200; }
+  .badge-blue    { @apply bg-blue-50 text-blue-700 border border-blue-200; }
 
   /* ── Sidebar nav item ── */
   .nav-item {
@@ -96,6 +112,9 @@
   .tbl-cell {
     @apply py-3 px-4 text-sm text-slate-700;
   }
+  /* striped rows */
+  .tbl-row-even { @apply bg-slate-50/60; }
+  .tbl-row-odd  { @apply bg-white; }
 
   /* ── Animations ── */
   .animate-fade-in {
@@ -106,4 +125,13 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
 }

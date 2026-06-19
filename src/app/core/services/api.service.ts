@@ -44,6 +44,12 @@ export class ApiService {
     );
   }
 
+  getBlob(url: string): Observable<Blob> {
+    return this.http.get(url, { responseType: 'blob' }).pipe(
+      catchError(err => this.handleError(err))
+    );
+  }
+
   private unwrap<T>(res: ApiResponse<T>): T {
     if (!res.success || res.data === null || res.data === undefined) {
       throw { code: res.error?.code, message: res.error?.message, details: res.error?.details } as ApiError;
